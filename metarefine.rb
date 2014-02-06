@@ -23,7 +23,7 @@ class Toparun
     @base_dir = File.expand_path(@base_name)
     k1 = @k1s[0]
     lines = File.readlines(@start_file)
-    lines.map!{|line| line.gsub /(.*)['].*/, $1 }
+    lines.map!{|line| line.gsub /(.*)['].*/, '\1' }
     lines.reject!{|line|
       (line =~ /penalties_weighting_K1/ ) || (line =~ /Out_CIF_STR/) }
     lines = lines.insert(lines.find_index{|i| i =~ /^\s*str\s*$/} + 1 , 
