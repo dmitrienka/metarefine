@@ -29,7 +29,7 @@ xdd "Z:\home\dmitrienka\Dropbox\R\metarefine\sucrose-re2 [001]_Add_Scans.raw"
 		Phase_LAC_1_on_cm( 12.45981`)
 		Phase_Density_g_on_cm3( 1.58931`)
 		a @  7.75996`
-		b @  8.70631`
+		b @  8.70631` ' comment with Out_CIF_STR
 		c @  10.86361`
 		be @  102.95105`
 		
@@ -37,7 +37,7 @@ xdd "Z:\home\dmitrienka\Dropbox\R\metarefine\sucrose-re2 [001]_Add_Scans.raw"
 		penalties_weighting_K1 1000
 
 	
-
+' Упоротый комментарий
 
 
 		prm beqo  1.33732`
@@ -48,8 +48,8 @@ xdd "Z:\home\dmitrienka\Dropbox\R\metarefine\sucrose-re2 [001]_Add_Scans.raw"
         prm =beqc/(8*Pi^2); :  0.00986`
         prm =beqh/(8*Pi^2); :  0.01183`
 
-        site O1    x @ -0.63231` y @ -0.64333` z @ -0.12228` occ O 1.000 beq =beqo;
-        site O2    x @ -0.60777` y @ -0.59229` z @ -0.32909` occ O 1.000 beq =beqo;
+        site O1    x @ -0.63231` y @ -0.64333` z @ -0.12228` occ O 1.000 beq =beq' comments!
+        site O2    x @ -0.60777` y @ -0.59229` z @ -0.32909` occ O 1.000 beq =beqo;' comments!
         site O3    x @ -0.68352` y @ -0.33804` z @ -0.28834` occ O 1.000 beq =beqo;
         site O4    x   -0.25176 y   -0.68065 z   -0.27318 occ O 1.000 beq =beqo;
         site O5    x   -0.79513 y   -0.56815 z   -0.57332 occ O 1.000 beq =beqo;
