@@ -6,21 +6,25 @@ xdd "Z:\home\dmitrienka\Dropbox\R\metarefine\sucrose-re2 [001]_Add_Scans.raw"
 	bkg @  7654.78291` -9513.75341`  7055.34658` -4095.20999`  2172.48352` -1093.84952`  601.587918` -340.44733`  327.41455` -337.775355`  259.86137` -150.885223`  61.8087` -9.19489947`  3.23277949`  15.8673346` -19.0991996`  24.8926582`
 	LP_Factor( 27.3)
 	Zero_Error(@, 0.01251`)
+	do_errors
 	Rp 217.5
 	Rs 217.5
-	lpsd_th2_angular_range_degrees  3
-		lpsd_equitorial_divergence_degrees  1
-		lpsd_equitorial_sample_length_mm @  0.258324793`_LIMIT_MIN_0.0001
-			lpsd_beam_spill_correct_intensity 0
-	Simple_Axial_Model(@, 9.75961`)
-		User_Defined_Dependence_Convolution(gauss_fwhm,  1/Cos(Th) , , 0.02266884668)
-		User_Defined_Dependence_Convolution(lor_fwhm,  Sin(2 Th) , , 0.01268294188)
+
+	axial_conv 
+		   filament_length  16
+		   sample_length @  4`_0.151150541_LIMIT_MIN_4 min =4; max =16;
+		   receiving_slit_length  17_LIMIT_MIN_0.0001
+		    primary_soller_angle  @  5.42891224`_0.01447577
+		    secondary_soller_angle  2.3
+		    axial_n_beta  10
+		    User_Defined_Dependence_Convolution(gauss_fwhm,  1/Cos(Th) , , 0.02357439146)
+		    Foil_ThicknessI(@ , 0.22916`_0.00288)
+
 	lam
 		ymin_on_ymax  0.0001
 		la  1 lo  1.540596 lh  0.5
 	str 
 		CS_G(@, 638.00154`)
-		Strain_G(@, 0.06053`)
 		r_bragg  4.66825228
 		scale @  0.0224625979`
 		phase_name "Structure"
@@ -33,6 +37,7 @@ xdd "Z:\home\dmitrienka\Dropbox\R\metarefine\sucrose-re2 [001]_Add_Scans.raw"
 		c @  10.86361`
 		be @  102.95105`
 		
+		PO_Spherical_Harmonics(,4)
 		Out_CIF_STR("sucrose-new.cif")
 		penalties_weighting_K1 1000
 
@@ -48,7 +53,7 @@ xdd "Z:\home\dmitrienka\Dropbox\R\metarefine\sucrose-re2 [001]_Add_Scans.raw"
         prm =beqc/(8*Pi^2); :  0.00986`
         prm =beqh/(8*Pi^2); :  0.01183`
 
-        site O1    x @ -0.63231` y @ -0.64333` z @ -0.12228` occ O 1.000 beq =beq' comments!
+        site O1    x @ -0.63231` y @ -0.64333` z @ -0.12228` occ O 1.000 beq =beqo;' comments!
         site O2    x @ -0.60777` y @ -0.59229` z @ -0.32909` occ O 1.000 beq =beqo;' comments!
         site O3    x @ -0.68352` y @ -0.33804` z @ -0.28834` occ O 1.000 beq =beqo;
         site O4    x   -0.25176 y   -0.68065 z   -0.27318 occ O 1.000 beq =beqo;
