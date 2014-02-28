@@ -19,7 +19,7 @@ class Toparun
       File.open("#{name}#{k1}.inp" , "w+"){|f| f.puts rfn.inp}
       tc "#{name}#{k1}.inp"
       out =  IO.read("#{name}#{k1}.out")
-      analyzer.analyze(out) ? rfn.next_inp(out) : break
+      analyzer.analyze(out self) ? rfn.next_inp(out) : break
     end
     analyzer.report
   end
@@ -88,7 +88,7 @@ class BaseAnalyzer
     @i = 0
   end
   
-  def analyze text
+  def analyze text toparuner
     @i = @i + 1
     true
   end
@@ -97,5 +97,35 @@ class BaseAnalyzer
     p "Refinement was finished in #{@i} steps."
     true
   end
+
+
+class QuantileAnalyzer
+  def initialize
+    @i = 0
+  end
+
+  def quantile7 p, x
+    n = x.size
+    sorted = x.sort
+    j = (n*p - p +1).floor
+    g = n*p - p + 1 - j
+    (1 - g) * sorted[j - 1] + g * sorted[j]
+  end
+
+  def get_data
+    
+  end
+
+  def analyze text toparuner
+    @i = @i + 1
+    true
+  end
+  
+  def report
+    p "Refinement was finished in #{@i} steps."
+    true
+  end
+end
+
 
 end
