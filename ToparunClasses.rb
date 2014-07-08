@@ -9,17 +9,20 @@ class Toparun
     @start_dir = Dir.getwd
     # Add some tests
   end
+  def k1
+    @k1
+  end
 
   def  refine rfn,  analyzer = BaseAnalyzer.new
     name = rfn.name
     Dir.mkdir(name) unless Dir.exists? name
     @base_dir = File.expand_path(name)
     Dir.chdir @base_dir
-    while (k1 = rfn.k1shift) do
+    while (@k1 = rfn.k1shift) do
       File.open("#{name}#{k1}.inp" , "w+"){|f| f.puts rfn.inp}
       tc "#{name}#{k1}.inp"
       out =  IO.read("#{name}#{k1}.out")
-      analyzer.analyze(out self) ? rfn.next_inp(out) : break
+      analyzer.analyze(out, self) ? rfn.next_inp(out) : break
     end
     analyzer.report
   end
@@ -88,7 +91,7 @@ class BaseAnalyzer
     @i = 0
   end
   
-  def analyze text toparuner
+  def analyze text, toparuner
     @i = @i + 1
     true
   end
@@ -97,11 +100,16 @@ class BaseAnalyzer
     p "Refinement was finished in #{@i} steps."
     true
   end
+end
 
 
 class QuantileAnalyzer
+  OUTLIER_LIMIT = 4
+  IQR_MULTIPLIER = 2.5
   def initialize
     @i = 0
+    @outliers = 0
+    @devs = []
   end
 
   def quantile7 p, x
@@ -112,20 +120,34 @@ class QuantileAnalyzer
     (1 - g) * sorted[j - 1] + g * sorted[j]
   end
 
-  def get_data
-    
+  def max_dev x
+    q1 = quantile7 0.25, x
+    q3 = quantile7 0.75, x
+    iqr = q3 - q1
+    [(q1 - x.min)/iqr, (x.max-q3)/iqr].max
   end
 
-  def analyze text toparuner
+  def get_data text
+    restrains_pattern = /Distance_Restrain(?:_Breakable|_Morse)?\(\s*(\w+\s+\w+)\s*,\s*([\d.]+)\s*,\s*([\d.]+)/
+    text.scan(restrains_pattern).map{|name, restrain, value|
+      [name, restrain.to_f, value.to_f]} 
+  end
+
+  def analyze text, toparuner
     @i = @i + 1
-    true
+    rd = get_data(text)
+    deviation = max_dev(rd.map{|name, restrain, value|
+    value - restrain})
+    p "Deviation is #{deviation}"
+    @devs << deviation
+    @outliers = @outliers + 1 if deviation > IQR_MULTIPLIER
+    @outliers < OUTLIER_LIMIT
   end
   
   def report
     p "Refinement was finished in #{@i} steps."
-    true
+    @devs.max - IQR_MULTIPLIER
   end
 end
 
 
-end
