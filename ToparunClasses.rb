@@ -151,3 +151,34 @@ class QuantileAnalyzer
 end
 
 
+class TopasInput
+  def initialize text, base_name = nil
+    @text = text
+    @base_name = name
+    parse!
+  end
+  
+  attr_reader :k1, :name 
+  
+  
+  private
+  
+  def parse!
+    @k1 = get_k1
+    @base_name, @name = get_name
+  end
+
+  def get_k1
+    @text.scan(/penalties_weighting_K1\s+([\d.]+)/)[0][0].to_f
+  end
+
+  def get_name
+    if @base_name 
+      [@base_name, "#{@base_name}_#{@k1}"]
+    else
+      base_name = @text.scan(/phase_name\s+"(.+)"/)[0][0]
+      [base_name,  "#{base_name}_#{@k1}"]
+    end
+  end
+
+end
