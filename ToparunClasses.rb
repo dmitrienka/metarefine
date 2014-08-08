@@ -64,7 +64,7 @@ class Refinement
   
   def next_inp out # Сделать умнее!
     @inp = out.gsub(/(penalties_weighting_K1\s+)[\d.]+/ , "\\1#{@k1s[0]}").
-               gsub(/[\d.]*(\.cif)/ , "#{@k1s[0]}\\1")
+               gsub(/[\d.]*(\.cif)/ , "#{@k1s[0]}\\1") 
   end
 
   def k1shift
@@ -158,14 +158,38 @@ class TopasInput
     parse!
   end
   
-  attr_reader :k1, :name 
+  attr_reader :k1, :name, :restrains 
+ 
+  def text
+    t = write_restrains
+    t.sub(/(penalties_weighting_K1\s+)[\d.]+/ , "\\1#{@k1}").
+      sub(/[\d.]*(\.cif)/ , "#{@k1}\\1").
+      sub(/phase_name\s+".+"/, %Q[phase_name "{@base_name}"])
+  end
   
+  def k1!=(num)
+    @k1 = num
+    self
+  end
+
+  def k1=(num)
+    dup.k1=(num)
+  end
+  
+  def restrain_names
+    @restrains.map{|r| r[:name]}
+  end
+
+  def set_restrain!(name, new)
+    if r = @restrains.select{|r| r[:name] == name}[0]
+      r[:
   
   private
   
   def parse!
     @k1 = get_k1
     @base_name, @name = get_name
+    @restrains = get_restrains
   end
 
   def get_k1
@@ -180,5 +204,23 @@ class TopasInput
       [base_name,  "#{base_name}_#{@k1}"]
     end
   end
+
+    def get_restrains
+      restrains_pattern = /(Distance_Restrain(?:_Breakable|_Morse)?)\(\s*(\w+\s+\w+)\s*,\s*([\d.]+)\s*,\s*([\d.]+)[`_\d.]*\s*,\s*([\d.]+\s*,\s*[\d.]+)\s*\)/
+      if @text =~ restrains_pattern
+        @text.scan(restrains_pattern).reduce([]){|memo, (type ,name, restrain, value, rest)|
+          memo << {name:name, type:type, restrain:restrain.to_f, value:value.to_f, rest:rest}
+          memo}
+      else
+        nil
+      end
+    end
+
+    def write_restrains
+      @restrains.reduce(@text) { |memo, r|
+        pattern = /#{r[:type]}\s*\(\s*#{r[:name]}\s*,\s*[\d.]+\s*,\s*[\d.]+[`_\d.]*\s*,\s*[\d.]+\s*,\s*[\d.]+\s*\)/ 
+        memo.sub(pattern, "#{r[:type]}(#{r[:name]}, #{r[:restrain]}, #{r[:value]}, #{r[:rest]})")        
+      }
+    end
 
 end
