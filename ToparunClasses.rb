@@ -52,7 +52,7 @@ class Toparun
 end
 
 class Refinement
-  def initialize file, name = inp_name(file),  ps, ss
+  def initialize(file, name = inp_name(file) , ps, ss)
     raise 'Check k1s and steps!' until ps.size == ss.size + 1
     @name = name
     @start_inp = file
@@ -91,7 +91,7 @@ class BaseAnalyzer
     @i = 0
   end
   
-  def analyze text, toparuner
+  def analyze text, toparuner = nil
     @i = @i + 1
     true
   end
@@ -148,79 +148,4 @@ class QuantileAnalyzer
     p "Refinement was finished in #{@i} steps."
     @devs.max - IQR_MULTIPLIER
   end
-end
-
-
-class TopasInput
-  def initialize text, base_name = nil
-    @text = text
-    @base_name = name
-    parse!
-  end
-  
-  attr_reader :k1, :name, :restrains 
- 
-  def text
-    t = write_restrains
-    t.sub(/(penalties_weighting_K1\s+)[\d.]+/ , "\\1#{@k1}").
-      sub(/[\d.]*(\.cif)/ , "#{@k1}\\1").
-      sub(/phase_name\s+".+"/, %Q[phase_name "{@base_name}"])
-  end
-  
-  def k1!=(num)
-    @k1 = num
-    self
-  end
-
-  def k1=(num)
-    dup.k1=(num)
-  end
-  
-  def restrain_names
-    @restrains.map{|r| r[:name]}
-  end
-
-  def set_restrain!(name, new)
-    if r = @restrains.select{|r| r[:name] == name}[0]
-      r[:
-  
-  private
-  
-  def parse!
-    @k1 = get_k1
-    @base_name, @name = get_name
-    @restrains = get_restrains
-  end
-
-  def get_k1
-    @text.scan(/penalties_weighting_K1\s+([\d.]+)/)[0][0].to_f
-  end
-
-  def get_name
-    if @base_name 
-      [@base_name, "#{@base_name}_#{@k1}"]
-    else
-      base_name = @text.scan(/phase_name\s+"(.+)"/)[0][0]
-      [base_name,  "#{base_name}_#{@k1}"]
-    end
-  end
-
-    def get_restrains
-      restrains_pattern = /(Distance_Restrain(?:_Breakable|_Morse)?)\(\s*(\w+\s+\w+)\s*,\s*([\d.]+)\s*,\s*([\d.]+)[`_\d.]*\s*,\s*([\d.]+\s*,\s*[\d.]+)\s*\)/
-      if @text =~ restrains_pattern
-        @text.scan(restrains_pattern).reduce([]){|memo, (type ,name, restrain, value, rest)|
-          memo << {name:name, type:type, restrain:restrain.to_f, value:value.to_f, rest:rest}
-          memo}
-      else
-        nil
-      end
-    end
-
-    def write_restrains
-      @restrains.reduce(@text) { |memo, r|
-        pattern = /#{r[:type]}\s*\(\s*#{r[:name]}\s*,\s*[\d.]+\s*,\s*[\d.]+[`_\d.]*\s*,\s*[\d.]+\s*,\s*[\d.]+\s*\)/ 
-        memo.sub(pattern, "#{r[:type]}(#{r[:name]}, #{r[:restrain]}, #{r[:value]}, #{r[:rest]})")        
-      }
-    end
-
 end
