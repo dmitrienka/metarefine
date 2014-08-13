@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 require 'optparse'
-load 'topaslib.rb'
+load '~/github/metarefine/topaslib.rb'
 
 
 options = {points:[100.0, 16.0, 0.0], steps:[4.0, 1.0], smart:false,  system: :wine}
@@ -27,7 +27,8 @@ TopasEngine.system = options[:system]
 
 
 runner = TopasEngine.new
-input = TopasInput.new IO.read(ARGV[0]), ARGV[0].sub(/\..{2,3}$/, '')
+input = TopasInput.new IO.read(ARGV[0], :encoding => Encoding.find("filesystem").to_s), 
+                       ARGV[0].sub(/\..{2,3}$/, '')
 
 runner.refine input,  options[:points], options[:steps],  (options[:smart] ? QuantileAnalyzer.new : BaseAnalyzer.new)
 

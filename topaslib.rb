@@ -141,6 +141,7 @@ class TopasEngine
 
   def initialize dir = Dir.getwd
     @base_dir = dir
+    @enc = Encoding.find("filesystem").to_s
   end
 
   def tc input
@@ -159,7 +160,7 @@ class TopasEngine
       p "Say hello to #{outfile} with k1 = #{input.k1}"
       File.open(outfile , mode:'w'){|f| f.write input.text}
     end
-    TopasInput.new IO.read("#{input.name}.out")
+    TopasInput.new IO.read("#{input.name}.out", :encoding => @enc)
   end
   
 
