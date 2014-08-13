@@ -27,7 +27,7 @@ TopasEngine.system = options[:system]
 
 
 runner = TopasEngine.new
-input = TopasInput.new IO.read(ARGV[0], :encoding => Encoding.find("filesystem").to_s), 
+input = TopasInput.new IO.read(ARGV[0], :encoding => "UTF-8"), 
                        ARGV[0].sub(/\..{2,3}$/, '')
 
 runner.refine input,  options[:points], options[:steps],  (options[:smart] ? QuantileAnalyzer.new : BaseAnalyzer.new)

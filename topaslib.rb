@@ -141,7 +141,7 @@ class TopasEngine
 
   def initialize dir = Dir.getwd
     @base_dir = dir
-    @enc = Encoding.find("filesystem").to_s
+    @enc = "UTF-8"
   end
 
   def tc input
