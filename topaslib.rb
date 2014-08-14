@@ -141,6 +141,7 @@ class TopasEngine
 
   def initialize dir = Dir.getwd
     @base_dir = dir
+    Dir.chdir @base_dir
     @enc = "UTF-8"
   end
 
