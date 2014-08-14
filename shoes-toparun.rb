@@ -1,11 +1,7 @@
-require 'green_shoes'
 require 'stringio'
 
 
-Shoes.app :width => 420 , :scroll=> true do
-
-  # init 
-  background "#F3F".."#F90"
+Shoes.app :width => 400, :height => 600  do
 
 
   #base flow
@@ -44,7 +40,7 @@ Shoes.app :width => 420 , :scroll=> true do
       
    
       
-      flow :width => 400, :height=> 150, :margin => 20  do
+      flow :width => 0.9, :height=> 400, :margin => 20, :scroll => true  do
         caption "Loggin para!"
         @log = StringIO.new
         @log.write "Hi, log starts here!\n"
