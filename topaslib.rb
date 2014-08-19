@@ -3,18 +3,19 @@
 
 
 class BaseAnalyzer
-  def initialize
+  def initialize output = $stdout
+    @out = output
     @count = 0
   end
   
   def analyze inp
-    p "Analizing #{inp.name}..."
+    @out.print "Analizing #{inp.name}... \n"
     @count = @count + 1
     true
   end
   
   def report 
-    p "Refinement  was finished in #{@count} steps."
+    @out.print "Refinement  was finished in #{@count} steps.\n"
     true
   end
 end
@@ -71,9 +72,10 @@ class TopasInput
     @text.scan(/penalties_weighting_K1\s+([\d.]+)/)[0][0].to_f
   end
 
-  def get_base_name base_name
-    if   base_name 
-      @text = @text.sub(/phase_name\s+".+"/, %Q[phase_name "#{base_name}"])
+  def get_base_name bn
+    if   bn
+      base_name = File.basename(bn, File.extname(bn))
+      @text = @text.sub(/phase_name\s+".+"/, %Q[phase_name "#{bn}"])
       base_name
     else
       base_name = @text.match(/phase_name\s+"(.+)"/)[1]
@@ -142,6 +144,8 @@ class TopasEngine
   def initialize dir = Dir.getwd
     @base_dir = dir
     Dir.chdir @base_dir
+    print "#{@base_dir}\n"
+    print "#{Dir.getwd} \n"
     @enc = "UTF-8"
   end
 

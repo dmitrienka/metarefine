@@ -1,12 +1,18 @@
 # -*- coding: utf-8 -*-
 require 'stringio'
+require 'green_shoes'
 load "~/github/metarefine/topaslib.rb"
 
-Shoes.app :width => 300, :height => 500  do
+
+Shoes.app :width => 400, :height => 800  do
 
   @log = StringIO.new
   @log.write "Hi, log starts here!\n"
-
+  
+  def log
+    @log
+  end
+  
   #base flow
   flow  :margin=>10 do
 
@@ -28,7 +34,7 @@ Shoes.app :width => 300, :height => 500  do
       end
       #\small flow
       
-      caption  "Point and steps"
+      caption  "Points and steps"
       para "TODO объяснить, кто все эти люди"
       flow do
         para "Points:"
@@ -56,27 +62,29 @@ Shoes.app :width => 300, :height => 500  do
             rescue alert("Блюди формат точек и шагов!!")
           end
 
-          Thread.new(points, steps ) do  |points, steps|
+          Thread.new(points, steps, @log ) do  |points, steps|
             inp = @inpline.text
             TopasEngine.system = @systemlist.text.to_sym
             runner = TopasEngine.new File.dirname(inp) 
-            input = TopasInput.new IO.read(inp, :encoding => "UTF-8"),  inp.sub(/\..{2,3}$/, '')
-
-
-            $stdout = @log
-            runner.refine input,  points, steps,  BaseAnalyzer.new
-            $stdout = STDOUT
+            input = TopasInput.new IO.read(inp, :encoding => "UTF-8"),  inp
+            runner.refine input,  points, steps,  BaseAnalyzer.new(@log)
+            @clear = button 'Clear' do
+              @log = StringIO.new
+              @clear.clear
+            end
           end
         end
-
-      
-   
+  
+        para self
       caption "Log:"
-      @logstack = stack :width => 0.9, :height=> 250, :margin => 20, :scroll => true  do
-        @paralog = para :width => 1.0, :height => 1.0
-        every do 
-          @paralog.text = @log.string
-          @logstack.scroll_top =  @logstack.scroll_max
+      stack :width => 300,   :margin => 20 do
+ 
+ 
+         @paralog = para
+        every 1  do |i|
+          a =  @log.string
+          @paralog.text = a  unless @paralog.text == a
+        flush
         end
       end
 
