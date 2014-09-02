@@ -8,12 +8,8 @@ require 'topas-tools'
 Shoes.app :width => 400, :height => 800  do
 
   @log = StringIO.new
-  @log.write "Hi, log starts here!\n"
-  
-  def log
-    @log
-  end
-  
+  @log.write "k1\tR_wp\tMax dev.\tMultiplier\tOutlier\n"
+    
   #base flow
   flow  :margin=>10 do
 
@@ -22,7 +18,7 @@ Shoes.app :width => 400, :height => 800  do
     #big stack
     stack do
       caption 'Your system:'
-      @systemlist = list_box items:['wine','windows','dummy'], choose:'wine' 
+      @systemlist = list_box items:['wine','windows','dummy'], choose:'windows' 
 
       caption 'Your Topas4-2 directory:'
       
@@ -36,7 +32,6 @@ Shoes.app :width => 400, :height => 800  do
       #\small flow
       
       caption  "Points and steps"
-      para "TODO объяснить, кто все эти люди"
       flow do
         para "Points:"
         @pointline = edit_line
@@ -44,7 +39,7 @@ Shoes.app :width => 400, :height => 800  do
       end
 
       flow do
-        para "Points:"
+        para "Steps:"
         @stepsline = edit_line
         @stepsline.text = "4,1"
       end
@@ -56,29 +51,34 @@ Shoes.app :width => 400, :height => 800  do
         end
       end
 
-        button 'Mf button!' do
-          begin
-            points = @pointline.text.split(/[,\s]+/).map(&:to_f)
-            steps  = @stepsline.text.split(/[,\s]+/).map(&:to_f)
-            rescue alert("Блюди формат точек и шагов!!")
-          end
+      button 'Go!' do
+        begin
+          points = @pointline.text.split(/[,\s]+/).map(&:to_f)
+          steps  = @stepsline.text.split(/[,\s]+/).map(&:to_f)
+        rescue alert("Some issues with steps'n'points!")
+        end
+        
+        Thread.new(points, steps, @log ) do  |points, steps|
 
-          Thread.new(points, steps, @log ) do  |points, steps|
-            inp = @inpline.text
-            TopasEngine.system = @systemlist.text.to_sym
-            runner = TopasEngine.new File.dirname(inp) 
-            input = TopasInput.new IO.read(inp, :encoding => "UTF-8"),  inp
-            runner.refine input,  points, steps,  BaseAnalyzer.new(@log)
-            @clear = button 'Clear' do
-              @log = StringIO.new
-              @clear.clear
-            end
+          inp    = @inpline.text
+          dir    = File.expand_path  File.dirname inp
+          name   = File.basename(inp, File.extname(inp))
+          text   = IO.read(inp,  :encoding => "UTF-8")
+          engine = TopasEngine.create  @systemlist.text.to_sym, @topasdir.text
+          input  = TopasInput.new text, name
+          steps  = Steps.new points, steps
+          runner = Metarefine.new engine, input, dir, steps 
+          runner.toparun BaseAnalyzer.new(@log)
+
+          @clear = button 'Clear' do
+            @log = StringIO.new
+            @clear.clear
           end
         end
+      end
   
-        para self
       caption "Log:"
-      stack :width => 300,   :margin => 20 do
+      stack :width => 370,   :margin => 20 do
  
  
          @paralog = para

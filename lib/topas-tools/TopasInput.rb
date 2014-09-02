@@ -5,9 +5,10 @@ class TopasInput
     @base_name  = get_base_name base_name
     @name = get_name
     @restrains = get_restrains
+    @r_wp = get_rwp
   end
 
-  attr_reader :k1, :name, :base_name, :restrains, :text
+  attr_reader :k1, :name, :base_name, :restrains, :text, :r_wp
  
  
   def set_k1!(num)
@@ -47,6 +48,11 @@ class TopasInput
   def get_k1
     @text.scan(/penalties_weighting_K1\s+([\d.]+)/)[0][0].to_f
   end
+
+  def get_rwp
+    @text.scan(/r_wp\s+([\d.]+)/)[0][0].to_f
+  end
+
 
   def get_base_name bn
     if   bn
