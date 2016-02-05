@@ -1,10 +1,10 @@
 Gem::Specification.new do |s|
   s.name        = 'topas-tools'
   s.homepage    = 'https://github.com/dmitrienka/topas-tools'
-  s.version     = '0.2.0'
+  s.version     = '0.2.1'
   s.date        = '2014-09-01'
   s.summary     = 'Rrrrr!'
-  s.description = 'Gem for repetitive Rietveld refinements with Topas4-2'
+  s.description = 'Gem for repetitive Rietveld refinements with Bruker Topas'
   s.authors     = ["Artem Dmitrienko"]
   s.email       = 'dmitrienka@gmail.com'
   s.files       = ["lib/topas-tools.rb",
