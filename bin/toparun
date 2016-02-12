@@ -5,7 +5,10 @@ require 'optparse'
 require 'topas-tools'
 
 
-options = {points:[100.0, 15.0, 0.25], steps:[4.0, 1.0], smart:false,  system: :wine, topasdir:'/home/dmitrienka/.wine/drive_c/TOPAS4-2/'}
+options = {points:[100.0, 15.0, 0.25],
+           steps:[4.0, 1.0],
+           smart:false,  system: :wine,
+           topasdir: ENV['TOPAS_DIR'] || "#{ENV['HOME']}/.wine/drive_c/TOPAS4-2/"}
 OptionParser.new do |opts|
   opts.banner = "Usage: toparun.rb  [-p 100,15,0.25 -s 4,1] filename.inp"
   opts.on("-p", "--points LIST", Array ,"Array of points, representing intervals with different stepsizes"){|list|
